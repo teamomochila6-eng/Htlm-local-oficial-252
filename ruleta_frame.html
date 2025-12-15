@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Ruleta Premium - Acceso a Carpetas Mega</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a0a2a 0%, #2d0b3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* BOTÓN SUPERIOR FIJO - BOT DE TELEGRAM */
+        .top-bot-btn {
+            background: linear-gradient(135deg, #0088cc, #006699);
+            color: white;
+            text-decoration: none;
+            padding: 18px 25px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 136, 204, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.3s;
+        }
+        
+        .top-bot-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.6);
+        }
+        
+        .header {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+        }
+        
+        .logo {
+            font-size: 50px;
+            margin-bottom: 15px;
+            animation: spin 10s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ff69b4;
+        }
+        
+        .subtitle {
+            color: #dda0dd;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* SECCIÓN DE LA RULETA */
+        .wheel-section {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 25px 15px;
+            margin: 20px 0;
+            border: 2px solid #ff1493;
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.3);
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            box-shadow: 0 0 0 8px rgba(255, 20, 147, 0.5),
+                        inset 0 0 30px rgba(0, 0, 0, 0.8),
+                        0 0 30px rgba(255, 20, 147, 0.7);
+            background: #000;
+        }
+        
+        .wheel-section-part {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        .wheel-center {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #ff1493, #8b008b);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 20px #ff1493,
+                        inset 0 0 10px rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            border: 3px solid white;
+        }
+        
+        .spin-btn {
+            background: linear-gradient(135deg, #ff1493, #8b008b);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            font-size: 20px;
+            margin: 25px 0 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(255, 20, 147, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .spin-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 20, 147, 0.7);
+        }
+        
+        .spin-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .pointer {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            z-index: 20;
+            font-size: 40px;
+            color: #ff0000;
+            text-shadow: 0 0 15px red;
+            filter: drop-shadow(0 0 5px #fff);
+        }
+        
+        /* SECCIÓN DE RESULTADO */
+        .result-section {
+            display: none;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 20px;
+            padding: 30px 20px;
+            margin-top: 25px;
+            animation: fadeIn 0.8s ease;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .congrats-icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+            color: #ffd700;
+            animation: bounce 1s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+        
+        .congrats-title {
+            color: #ffd700;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .prize-description {
+            color: #ffb6c1;
+            font-size: 20px;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .instructions-box {
+            background: rgba(255, 105, 180, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #ff69b4;
+            text-align: left;
+        }
+        
+        .instructions-box h3 {
+            color: #ff69b4;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+        }
+        
+        .step {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #ff69b4;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
+        .step-title {
+            color: #ffd700;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .step-description {
+            color: #f0e6f6;
+            line-height: 1.6;
+            margin-left: 50px;
+        }
+        
+        .frame-link-box {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px dashed #4CAF50;
+            text-align: center;
+        }
+        
+        .frame-link-box h4 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .frame-link {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            word-break: break-all;
+            border: 1px solid #4CAF50;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+        
+        .frame-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .frame-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6);
+        }
+        
+        .mega-box {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #9C27B0;
+            text-align: center;
+        }
+        
+        .mega-box h4 {
+            color: #9C27B0;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .mega-btn {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(156, 39, 176, 0.4);
+        }
+        
+        .mega-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(156, 39, 176, 0.6);
+        }
+        
+        .warning-box {
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0 20px;
+            border-left: 5px solid #ff4444;
+        }
+        
+        .warning-box h4 {
+            color: #ff4444;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #888;
+            font-size: 12px;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        @media (max-width: 480px) {
+            .wheel-container {
+                width: 280px;
+                height: 280px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .top-bot-btn, .spin-btn {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+            
+            .congrats-title {
+                font-size: 26px;
+            }
+            
+            .prize-description {
+                font-size: 18px;
+            }
+            
+            .frame-btn, .mega-btn {
+                padding: 18px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- BOTÓN SUPERIOR FIJO PARA EL BOT DE TELEGRAM -->
+        <a href="https://t.me/DESCARGAVIDieOS_bot" class="top-bot-btn" target="_blank">
+            <i class="fab fa-telegram"></i>
+            <span>🤖 VER BOT DE DESCARGA DE CONTENIDO RESTRINGIDO</span>
+        </a>
+        
+        <div class="header">
+            <div class="logo">🎡</div>
+            <h1>RULETA PREMIUM - ACCESO A CARPETAS MEGA</h1>
+            <p class="subtitle">Gira la ruleta, gana tu premio y sigue los pasos para acceder a miles de videos</p>
+        </div>
+        
+        <!-- SECCIÓN DE LA RULETA -->
+        <div class="wheel-section">
+            <h2 style="color: #ff69b4; margin-bottom: 20px; font-size: 22px;">🎁 SELECCIONA TU PREMIO EXCLUSIVO</h2>
+            
+            <div class="wheel-container">
+                <div class="pointer">🔻</div>
+                <div class="wheel" id="wheel">
+                    <!-- Las secciones de la ruleta se generan con JavaScript -->
+                </div>
+                <div class="wheel-center">🔥</div>
+            </div>
+            
+            <button class="spin-btn" id="spinBtn">
+                <i class="fas fa-fire"></i> GIRAR LA RULETA (1 OPORTUNIDAD)
+            </button>
+            
+            <p class="subtitle" style="color: #ffb6c1;">Cada premio incluye carpetas Mega con 5,000+ videos</p>
+        </div>
+        
+        <!-- SECCIÓN DE RESULTADO -->
+        <div class="result-section" id="resultSection">
+            <div class="congrats-icon" id="resultIcon">🎉</div>
+            <h2 class="congrats-title" id="congratsTitle">¡FELICIDADES GANADOR!</h2>
+            <p class="prize-description" id="prizeDescription">Has ganado acceso a una carpeta Mega exclusiva</p>
+            
+            <div class="instructions-box">
+                <h3><i class="fas fa-unlock-alt"></i> PASOS PARA ACCEDER A TU CARPETA MEGA</h3>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <span class="step-title">ABRE ESTE ENLACE PARA VER LA CONTRASEÑA</span>
+                    <p class="step-description">
+                        Haz clic en el botón verde de abajo. Se abrirá un enlace donde podrás <strong>ver la contraseña Mega</strong> completa de tu carpeta ganadora. La contraseña estará claramente visible en una imagen o texto.
+                    </p>
+                </div>
+                
+                <div class="frame-link-box">
+                    <h4><i class="fas fa-link"></i> ENLACE PARA VER TU CONTRASEÑA MEGA</h4>
+                    <div class="frame-link" id="frameLink">
+                        https://framevdds.com/s/2000681741735698433
+                    </div>
+                    <a href="https://framevdds.com/s/2000681741735698433" class="frame-btn" target="_blank" id="frameBtn">
+                        <i class="fas fa-external-link-alt"></i> ABRIR ENLACE Y VER CONTRASEÑA
+                    </a>
+                    <p style="color: #aaa; margin-top: 15px;">Al abrir este enlace, verás la contraseña Mega para tu carpeta ganadora</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <span class="step-title">DESCARGA LA APLICACIÓN MEGA</span>
+                    <p class="step-description">
+                        Si no tienes la aplicación Mega, descárgala desde tu tienda de aplicaciones (Play Store o App Store). Es gratuita y necesaria para acceder a tu carpeta con los videos.
+                    </p>
+                </div>
+                
+                <div class="mega-box">
+                    <h4><i class="fas fa-download"></i> DESCARGAR APLICACIÓN MEGA</h4>
+                    <a href="https://mega.nz/android" class="mega-btn" target="_blank">
+                        <i class="fas fa-mobile-alt"></i> DESCARGAR MEGA PARA ANDROID
+                    </a>
+                    <a href="https://apps.apple.com/app/mega/id706857885" class="mega-btn" target="_blank" style="background: linear-gradient(135deg, #007AFF, #0056CC);">
+                        <i class="fab fa-apple"></i> DESCARGAR MEGA PARA iOS
+                    </a>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <span class="step-title">INICIA SESIÓN EN MEGA CON LA CONTRASEÑA</span>
+                    <p class="step-description">
+                        Abre la aplicación Mega y <strong>inicia sesión</strong> usando la contraseña que viste en el paso 1. La contraseña te dará acceso directo a tu carpeta ganadora con todos los videos.
+                    </p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <span class="step-title">DISFRUTA TUS VIDEOS</span>
+                    <p class="step-description">
+                        ¡Listo! Ahora tienes acceso completo a tu carpeta Mega con <strong id="videoCount">10,000</strong> videos exclusivos. Puedes verlos online o descargarlos en tu dispositivo.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h4><i class="fas fa-exclamation-triangle"></i> ATENCIÓN IMPORTANTE</h4>
+                <p>• La contraseña es exclusiva para ti como ganador. No la compartas con nadie.<br>
+                   • El acceso a la carpeta es personal e intransferible.<br>
+                   • Compartir la contraseña puede resultar en la eliminación permanente de tu acceso.</p>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <a href="https://t.me/DESCARGAVIDieOS_bot" class="top-bot-btn" target="_blank" style="max-width: 350px; background: linear-gradient(135deg, #ff1493, #8b008b);">
+                    <i class="fab fa-telegram"></i>
+                    <span>VOLVER AL BOT DE DESCARGA</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 Ruleta Premium | Carpetas Mega con contenido exclusivo para mayores de 18+ años</p>
+            <p>Todas las carpetas contienen entre 5,000 y 15,000 videos de alta calidad</p>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE PREMIOS CON ENLACE FRAMEVDDS
+        const wheelPrizes = [
+            {
+                id: 1,
+                name: "CALDO DE POLLO",
+                icon: "🍗🔥",
+                color: "#FF6384",
+                description: "Carpeta Mega con 10,000 videos de Caldo de Pollo exclusivos",
+                videoCount: "10,000",
+                frameLink: "https://framevdds.com/s/2000681741735698433"
+            },
+            {
+                id: 2,
+                name: "PC EXCLUSIVO",
+                icon: "💻🔥",
+                color: "#36A2EB",
+                description: "Carpeta Mega con 8,500 videos PC ultra exclusivos",
+                videoCount: "8,500",
+                frameLink: "https://framevdds.com/s/2000681741735698433"
+            },
+            {
+                id: 3,
+                name: "MEGA VIP",
+                icon: "📦💎",
+                color: "#FFCE56",
+                description: "Carpeta Mega VIP con 12,000 videos premium",
+                videoCount: "12,000",
+                frameLink: "https://framevdds.com/s/2000681741735698433"
+            },
+            {
+                id: 4,
+                name: "VIDEOS HOT",
+                icon: "🎬🔥",
+                color: "#4BC0C0",
+                description: "Carpeta Mega con 9,000 videos hot exclusivos",
+                videoCount: "9,000",
+                frameLink: "https://framevdds.com/s/2000681741735698433"
+            },
+            {
+                id: 5,
+                name: "COLECCIÓN ORO",
+                icon: "🏆💖",
+                color: "#9966FF",
+                description: "Carpeta Mega con 15,000 videos colección completa",
+                videoCount: "15,000",
+                frameLink: "https://framevdds.com/s/2000681741735698433"
+            },
+            {
+                id: 6,
+                name: "SORPRESA",
+                icon: "🎁✨",
+                color: "#FF9F40",
+                description: "Carpeta Mega sorpresa con contenido especial",
+                videoCount: "7,500",
+                frameLink: "https://framevdds.com/s/2000681741735698433"
+            }
+        ];
+        
+        // Elementos DOM
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const resultSection = document.getElementById('resultSection');
+        const resultIcon = document.getElementById('resultIcon');
+        const congratsTitle = document.getElementById('congratsTitle');
+        const prizeDescription = document.getElementById('prizeDescription');
+        const frameLink = document.getElementById('frameLink');
+        const frameBtn = document.getElementById('frameBtn');
+        const videoCount = document.getElementById('videoCount');
+        
+        let isSpinning = false;
+        let hasSpun = false;
+        let currentPrize = null;
+        
+        // Inicializar la ruleta
+        function initializeWheel() {
+            wheel.innerHTML = '';
+            const angle = 360 / wheelPrizes.length;
+            
+            wheelPrizes.forEach((prize, index) => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'wheel-section-part';
+                sectionEl.style.backgroundColor = prize.color;
+                sectionEl.style.transform = `rotate(${index * angle}deg)`;
+                sectionEl.innerHTML = `
+                    <div style="transform: rotate(${angle/2}deg); font-size: 13px; padding: 5px;">
+                        <div style="font-size: 22px; margin-bottom: 5px;">${prize.icon}</div>
+                        <strong>${prize.name}</strong>
+                    </div>
+                `;
+                wheel.appendChild(sectionEl);
+            });
+        }
+        
+        // Girar la ruleta
+        spinBtn.addEventListener('click', function() {
+            if (isSpinning || hasSpun) return;
+            
+            isSpinning = true;
+            spinBtn.disabled = true;
+            spinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GIRANDO...';
+            
+            // Seleccionar un premio aleatorio (siempre gana Caldo de Pollo si quieres)
+            const prizeIndex = 0; // Cambia a 0 para que siempre gane Caldo de Pollo
+            // const prizeIndex = Math.floor(Math.random() * wheelPrizes.length); // Para aleatorio
+            currentPrize = wheelPrizes[prizeIndex];
+            
+            // Calcular rotación
+            const spins = 5;
+            const sectionAngle = 360 / wheelPrizes.length;
+            const stopAngle = (spins * 360) + (360 - (prizeIndex * sectionAngle)) - (sectionAngle / 2);
+            
+            wheel.style.transform = `rotate(${stopAngle}deg)`;
+            
+            // Mostrar resultado después de la animación
+            setTimeout(() => {
+                isSpinning = false;
+                hasSpun = true;
+                showPrizeResult(currentPrize);
+                spinBtn.innerHTML = '<i class="fas fa-check"></i> YA GIRASTE';
+                createConfetti();
+            }, 4000);
+        });
+        
+        // Mostrar el resultado del premio
+        function showPrizeResult(prize) {
+            // Actualizar contenido
+            resultIcon.textContent = prize.icon;
+            congratsTitle.textContent = `¡FELICIDADES GANASTE ${prize.name}!`;
+            prizeDescription.textContent = prize.description;
+            videoCount.textContent = prize.videoCount;
+            
+            // Actualizar el enlace FrameVDDS
+            frameLink.textContent = prize.frameLink;
+            frameBtn.href = prize.frameLink;
+            
+            // Mostrar sección de resultado
+            resultSection.style.display = 'block';
+            
+            // Desplazar suavemente al resultado
+            setTimeout(() => {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
+            
+            // Mostrar mensaje en consola
+            console.log(`🎉 Premio ganado: ${prize.name}`);
+            console.log(`🎬 Videos: ${prize.videoCount}`);
+            console.log(`🔗 Enlace FrameVDDS: ${prize.frameLink}`);
+        }
+        
+        // Efecto de confeti al ganar
+        function createConfetti() {
+            const colors = ['#FF1493', '#FF69B4', '#FFD700', '#4CAF50', '#2196F3', '#9C27B0'];
+            
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '15px';
+                    confetti.style.height = '15px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-30px';
+                    confetti.style.zIndex = '9999';
+                    confetti.style.opacity = '0.9';
+                    document.body.appendChild(confetti);
+                    
+                    // Animación
+                    const animation = confetti.animate([
+                        { 
+                            transform: `translate(0, 0) rotate(0deg)`, 
+                            opacity: 1 
+                        },
+                        { 
+                            transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, 
+                            opacity: 0 
+                        }
+                    ], {
+                        duration: 2000 + Math.random() * 2000,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    });
+                    
+                    animation.onfinish = () => confetti.remove();
+                }, i * 50);
+            }
+        }
+        
+        // Inicializar la ruleta al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeWheel();
+            console.log('🎡 Ruleta Premium con FrameVDDS cargada correctamente');
+            console.log('🔗 Enlace FrameVDDS: https://framevdds.com/s/2000681741735698433');
+        });
+        
+        // Para el botón FrameVDDS - abrir en nueva pestaña con mensaje
+        frameBtn.addEventListener('click', function(e) {
+            if (!currentPrize) return;
+            
+            // Opcional: Mostrar mensaje antes de abrir
+            setTimeout(() => {
+                alert('🔓 ¡ATENCIÓN!\n\nAl abrir este enlace verás la CONTRASEÑA MEGA para tu carpeta.\n\n1. Copia la contraseña que aparece\n2. Ve a la aplicación Mega\n3. Inicia sesión con esa contraseña\n4. ¡Disfruta tus videos!');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
